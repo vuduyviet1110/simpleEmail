@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>outbox page</title>
+  <link rel="stylesheet" href="/css/inbox.css">
+</head>
+
+<% if(user) {
+    %> 
+    <body>
+        <header>
+          <div class="header-container">
+            <span class="user-name"> Welcome to outbox page, <%= user.user_name %>!</span>
+            <a href="/" class="sign-out-link">Sign out</a>
+          </div>
+        </header>
+      
+        <main>
+          <nav class="vertical-menu">
+            <ul>
+              <li><a href="/compose">Compose</a></li>
+              <li><a href="/inbox">Inbox</a></li>
+              <li><a href="#">Outbox</a></li>
+            </ul>
+          </nav>
+      
+          <section class="main-content">
+              <table >
+                  <tr>
+                    <th><button onclick="deleteSelectedEmails()">Delete</button></th>
+                    <th>To</th>
+                    <th>Subject</th>
+                    <th>Time</th>
+                  </tr>
+                  
+                <% if (emailsByPage && totalPages) { %>
+                  <% if (emailsByPage.length > 0) { %>
+                    <% for (let email of emailsByPage) { %>
+                      <% if (email.receiver_id !== user.user_id) { %>
+                        <tr>
+                          <td><input type="checkbox" name="selectedEmail" value="<%= email.email_id %>"></td>
+                          <td><%= email.user_name %></td> 
+                          <td>
+                            <a href="/detail?email_id=<%= email.email_id %>">
+                              <% if (email.subject) { %>
+                                <strong><%= email.subject %></strong><% } 
+                              else { %>
+                                <span>(no subject)</span>
+                                <% } %>
+                            </a>
+                          </td>
+                          <td><%= email.timeReceived %></td> 
+                        </tr>
+                      <% } %>
+                      
+                    <% } %>
+                  <% } %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="6"><h3>No received emails</h3></td>
+                  </tr>
+                <% } %>
+                </table>
+              </table>
+                <ul class="page">
+                  <% for(i =1; i<= totalPages; i++) { %>
+                    <button style="height: 30px;display: flex;width: 30px;justify-content: center;align-items: center;"><a href="/outbox?user_id=<%=user.user_id%>&page=<%=i%>"><%=i %></a></button>
+                  <%}
+                  %>
+                </ul>    
+            </section>
+        </main>
+        <script>
+
+          function deleteSelectedEmails() {
+            const selectedEmails = document.querySelectorAll('input[name="selectedEmail"]:checked');
+
+            // Use the Fetch API to send a DELETE request for each selected email
+            selectedEmails.forEach(async (checkbox) => {
+              const emailId = checkbox.value;
+              try {
+                const response = await fetch(`/api/emails/${emailId}`, { method: 'DELETE' });
+                const data = await response.json();
+                // Check the response for success, and update the UI accordingly
+                if (data.success) {
+                  // Remove the corresponding row from the UI
+                  checkbox.closest('tr').remove();
+                }
+              } catch (error) {
+                console.error('Error deleting email:', error);
+              }
+            });
+          }
+
+        </script>
+
+      </body>
+    <%
+} %>
+
+
+</html>

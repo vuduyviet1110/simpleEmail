@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>detail page</title>
+  <link rel="stylesheet" href="/css/detail.css">
+  <style>
+    
+    body{
+        font-family: sans-serif;
+        padding:0;
+        margin:0;
+    }
+  
+    header {
+        color:white;
+        width: 100%;
+        background-color: #1d3956;
+        display: flex;
+        height: 60px;
+        padding: 10px;
+        align-items: center;
+        justify-content: center;
+
+    }
+
+    .header-container {
+        width: 95%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+
+    .user-name {
+    font-size: 22px;
+    font-weight: bold;
+    }
+
+    .sign-out-link {
+        color: #fff;
+        text-decoration: none;
+    }
+
+
+    main{
+        display: flex;
+        width: 100%;
+        height: calc(100vh - 80px);
+    }
+    .vertical-menu {
+        width: 200px;
+        min-width: 200px;
+        background-color: rgb(142, 187, 231);
+        border-right: 2px solid #ccc;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+
+    }
+
+    li {
+        padding: 10px;
+        &:hover{
+            background-color: #909dab;
+            cursor: pointer;
+            color:white
+        }
+    }
+
+    a {
+        color: #333;
+        display: block;
+        text-decoration: none;
+        padding: 10px;
+        &:hover{
+            text-decoration: none;
+            background-color: #909dab;
+        }
+    }
+
+    </style>
+</head>
+
+<% if(matched_email,user) {
+    %> 
+    <body>
+        <header>
+          <div class="header-container">
+            <span class="user-name"> Welcome to compose page, <%= user.user_name %></span>
+            <a href="/" class="sign-out-link">Sign out</a>
+          </div>
+        </header>
+      
+        <main>
+            <nav class="vertical-menu">
+                <ul>
+                <li><a href="/compose">Compose</a></li>
+                <li><a href="/inbox">Inbox</a></li>
+                <li><a href="/outbox">Outbox</a></li>
+                </ul>
+            </nav>
+      
+            <div class="content">
+                <h2>Email Detail</h2>
+
+                <strong>From: <%= matched_email.user_name %> </strong>
+                <div style="margin:8px 0">
+                    <strong>Subject:</strong> <%= matched_email.subject || '(no subject)' %> ,
+                </div>
+                <div style=" display: flex; flex-direction:column; margin-bottom: 16px;">
+                    <strong style="margin-bottom: 8px">Body:</strong> <%= matched_email.message || '(no message)' %>
+                </div>
+                <% if (matched_email.filename) { %>
+                    <div>
+                    <strong>Attachment:</strong> Click link below to download the attachment
+                    <a href="/download/<%= matched_email.filename %>"><%= matched_email.filename %></a>
+                    </div>
+                <% } %>
+            </div>
+            
+
+            
+        </main>
+        
+    </body>
+    <%
+} %>
+</html>
+

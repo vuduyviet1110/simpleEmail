@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>inbox page</title>
+  <link rel="stylesheet" href="/css/compose.css">
+  <style>
+    
+    body{
+        font-family: sans-serif;
+        padding:0;
+        margin:0;
+    }
+  
+    header {
+        color:white;
+        width: 100%;
+        background-color: #1d3956;
+        display: flex;
+        height: 60px;
+        padding: 10px;
+        align-items: center;
+        justify-content: center;
+
+    }
+
+    .header-container {
+        width: 95%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+
+    .user-name {
+    font-size: 22px;
+    font-weight: bold;
+    }
+
+    .sign-out-link {
+        color: #fff;
+        text-decoration: none;
+    }
+
+
+    main{
+        display: flex;
+        width: 100%;
+        height: calc(100vh - 80px);
+    }
+    .vertical-menu {
+        width: 200px;
+        min-width: 200px;
+        background-color: rgb(142, 187, 231);
+        border-right: 2px solid #ccc;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+
+    }
+
+    li {
+        padding: 10px;
+        &:hover{
+            background-color: #909dab;
+            cursor: pointer;
+            color:white
+        }
+    }
+
+    a {
+        color: #333;
+        display: block;
+        text-decoration: none;
+        padding: 10px;
+        &:hover{
+            text-decoration: none;
+            background-color: #909dab;
+        }
+    }
+
+    </style>
+</head>
+
+<% if(matchedUser) {
+    %> 
+    <body>
+        <header>
+          <div class="header-container">
+            <span class="user-name"> Welcome to compose page, <%- matchedUser.user_name%>!</span>
+            <a href="/" class="sign-out-link">Sign out</a>
+          </div>
+        </header>
+      
+        <main>
+            <nav class="vertical-menu">
+                <ul>
+                <li><a href="/compose">Compose</a></li>
+                <li><a href="/inbox">Inbox</a></li>
+                <li><a href="/outbox">Outbox</a></li>
+                </ul>
+            </nav>
+      
+            <div class="content">
+                <form method="POST" id="composeForm" onsubmit="return sendEmail()" enctype="multipart/form-data">
+                    <label for="recipient">Recipient:</label>
+
+                    <select id="recipient" name="recipient">
+                        <option value="unknown">Unknown</option>
+                        <% allUsers.forEach(function(u) { %>
+                          <% if (u.user_id !== matchedUser.user_id) { %>
+                            <option value="<%- u.user_id %>"><%- u.user_name  %> (<span><%- (u.user_email) %></span>)</option>
+                          <% } %>
+                        <% }); %>
+                    </select>
+                      
+
+                    <div id="errorMessage" style="color: red;"></div>
+                    
+                    <label for="subject">Subject:</label>
+                    <input type="text" id="subject" name="subject">
+
+                    <label for="EmailContent">Body:</label>
+                    <textarea id="EmailContent" name="Content"></textarea>
+
+                    <label for="attachment">Attachment:</label>
+                    <input type="file" id="attachment" name="attachment">
+
+                    <button id = "submit_btn" type="submit" onclick="sendEmail()">Send</button>
+                    <div id="successMessage" style="color: green;"></div>
+                </form>
+            </div>
+            
+
+
+            
+        </main>
+        <script>
+            function sendEmail() {
+                // Clear previous messages
+                document.getElementById('errorMessage').innerText = '';
+                document.getElementById('successMessage').innerText = '';
+
+                // Get form values
+                const recipient = document.getElementById('recipient').value;
+                const button = document.getElementById('submit_btn');
+
+                if (recipient==='unknown') {
+                    document.getElementById('errorMessage').innerText = 'Please select a recipient.';
+                    return false;
+                }
+                
+                // Simulate sending the email (you would typically use an API for this)
+                    document.getElementById('successMessage').innerText = 'Email sent successfully!';
+            }
+            </script>
+    </body>
+    <%
+} %>
+</html>
+
